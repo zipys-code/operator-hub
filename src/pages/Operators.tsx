@@ -50,9 +50,15 @@ const Operators = () => {
     }
   };
 
-  const filtered = operators.filter((op) =>
-    op.operatorName.includes(search) || String(op.operatorId).includes(search)
-  );
+  const filtered = useMemo(() => {
+    if (!search) return operators;
+    const q = search.toLowerCase();
+    return operators.filter((op) =>
+      op.operatorName.includes(q) ||
+      String(op.operatorId).includes(q) ||
+      op.contactFirstName.includes(q)
+    );
+  }, [search]);
 
   const sorted = useMemo(() => {
     if (!sortKey || !sortDir) return filtered;
@@ -134,7 +140,13 @@ const Operators = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sorted.map((op) => (
+            {sorted.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-12 text-muted-foreground text-base">
+                  לא נמצאו מפעילים תואמים
+                </TableCell>
+              </TableRow>
+            ) : sorted.map((op) => (
               <TableRow key={op.recordId} className="hover:bg-muted/30 border-b">
                 <TableCell className="text-center">
                   <MoreVertical className="h-4 w-4 text-muted-foreground cursor-pointer" />
