@@ -19,7 +19,7 @@ const StatusDot = ({ code, label }: { code: string; label: string }) => (
 );
 
 type SortDirection = "asc" | "desc" | null;
-type SortKey = "operatorName" | "operatorId" | null;
+type SortKey = "operatorName" | "operatorId" | "adminStatusDesc" | "operationStatusDesc" | "contact" | "contactPhone" | "lastQueryTime" | null;
 
 const SortIcon = ({ direction }: { direction: SortDirection }) => {
   if (direction === "asc") return <ChevronUp className="h-3 w-3" />;
@@ -58,8 +58,15 @@ const Operators = () => {
     if (!sortKey || !sortDir) return filtered;
     return [...filtered].sort((a, b) => {
       let cmp = 0;
-      if (sortKey === "operatorId") cmp = a.operatorId - b.operatorId;
-      else cmp = a.operatorName.localeCompare(b.operatorName, "he");
+      switch (sortKey) {
+        case "operatorId": cmp = a.operatorId - b.operatorId; break;
+        case "operatorName": cmp = a.operatorName.localeCompare(b.operatorName, "he"); break;
+        case "adminStatusDesc": cmp = a.adminStatusDesc.localeCompare(b.adminStatusDesc, "he"); break;
+        case "operationStatusDesc": cmp = a.operationStatusDesc.localeCompare(b.operationStatusDesc, "he"); break;
+        case "contact": cmp = `${a.contactFirstName} ${a.contactLastName}`.localeCompare(`${b.contactFirstName} ${b.contactLastName}`, "he"); break;
+        case "contactPhone": cmp = a.contactPhone.localeCompare(b.contactPhone); break;
+        case "lastQueryTime": cmp = new Date(a.lastQueryTime).getTime() - new Date(b.lastQueryTime).getTime(); break;
+      }
       return sortDir === "desc" ? -cmp : cmp;
     });
   }, [filtered, sortKey, sortDir]);
@@ -109,11 +116,21 @@ const Operators = () => {
               <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("operatorId")}>
                 <span className="flex items-center gap-1 justify-center">מזהה מפעיל <SortIcon direction={sortKey === "operatorId" ? sortDir : null} /></span>
               </TableHead>
-              <TableHead className="text-center">סטטוס ניהולי</TableHead>
-              <TableHead className="text-center">סטטוס תפעולי</TableHead>
-              <TableHead className="text-center">איש קשר</TableHead>
-              <TableHead className="text-center">טלפון</TableHead>
-              <TableHead className="text-center">מועד שאילתה אחרונה</TableHead>
+              <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("adminStatusDesc")}>
+                <span className="flex items-center gap-1 justify-center">סטטוס ניהולי <SortIcon direction={sortKey === "adminStatusDesc" ? sortDir : null} /></span>
+              </TableHead>
+              <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("operationStatusDesc")}>
+                <span className="flex items-center gap-1 justify-center">סטטוס תפעולי <SortIcon direction={sortKey === "operationStatusDesc" ? sortDir : null} /></span>
+              </TableHead>
+              <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("contact")}>
+                <span className="flex items-center gap-1 justify-center">איש קשר <SortIcon direction={sortKey === "contact" ? sortDir : null} /></span>
+              </TableHead>
+              <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("contactPhone")}>
+                <span className="flex items-center gap-1 justify-center">טלפון <SortIcon direction={sortKey === "contactPhone" ? sortDir : null} /></span>
+              </TableHead>
+              <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("lastQueryTime")}>
+                <span className="flex items-center gap-1 justify-center">מועד שאילתה אחרונה <SortIcon direction={sortKey === "lastQueryTime" ? sortDir : null} /></span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
