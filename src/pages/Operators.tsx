@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Search, Plus, BarChart3, Menu, MoreVertical, ChevronDown, UserCog } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Search, Plus, BarChart3, Menu, MoreVertical, ChevronDown, ChevronUp, ChevronsUpDown, UserCog } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,12 +48,58 @@ const StatusDot = ({ status }: { status: OperatorStatus }) => (
   </div>
 );
 
+type SortDirection = "asc" | "desc" | null;
+type SortKey = keyof Operator | null;
+
+const parseDateStr = (s: string): number => {
+  const clean = s.replace("\n", " ").trim();
+  const match = clean.match(/(\d{2})\/(\d{2})\/(\d{4})\s*(\d{2}):(\d{2}):(\d{2})/);
+  if (!match) return 0;
+  return new Date(+match[3], +match[2] - 1, +match[1], +match[4], +match[5], +match[6]).getTime();
+};
+
+const SortIcon = ({ direction }: { direction: SortDirection }) => {
+  if (direction === "asc") return <ChevronUp className="h-3 w-3" />;
+  if (direction === "desc") return <ChevronDown className="h-3 w-3" />;
+  return <ChevronsUpDown className="h-3 w-3 opacity-40" />;
+};
+
 const Operators = () => {
   const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>(null);
+  const [sortDir, setSortDir] = useState<SortDirection>(null);
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      if (sortDir === "asc") setSortDir("desc");
+      else if (sortDir === "desc") { setSortKey(null); setSortDir(null); }
+      else setSortDir("asc");
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
 
   const filtered = mockOperators.filter((op) =>
     op.name.includes(search) || String(op.operatorId).includes(search)
   );
+
+  const sorted = useMemo(() => {
+    if (!sortKey || !sortDir) return filtered;
+    return [...filtered].sort((a, b) => {
+      const va = a[sortKey];
+      const vb = b[sortKey];
+      let cmp = 0;
+      if (typeof va === "number" && typeof vb === "number") {
+        cmp = va - vb;
+      } else if (["lastQueryDate", "lastPullDate", "lastValidPullDate"].includes(sortKey)) {
+        cmp = parseDateStr(String(va)) - parseDateStr(String(vb));
+      } else {
+        cmp = String(va).localeCompare(String(vb), "he");
+      }
+      return sortDir === "desc" ? -cmp : cmp;
+    });
+  }, [filtered, sortKey, sortDir]);
 
   return (
     <div dir="rtl" className="min-h-screen bg-background text-foreground">
@@ -105,21 +151,37 @@ const Operators = () => {
           <TableHeader>
             <TableRow className="bg-muted/50">
               <TableHead className="text-right w-10"></TableHead>
-              <TableHead className="text-right">
-                <span className="flex items-center gap-1 justify-end">שם המפעיל <ChevronDown className="h-3 w-3" /></span>
+              <TableHead className="text-right cursor-pointer select-none" onClick={() => handleSort("name")}>
+                <span className="flex items-center gap-1 justify-end">שם המפעיל <SortIcon direction={sortKey === "name" ? sortDir : null} /></span>
               </TableHead>
-              <TableHead className="text-center">מזהה מפעיל</TableHead>
-              <TableHead className="text-center">סטטוס ניהולי</TableHead>
-              <TableHead className="text-center">סטטוס תפעולי</TableHead>
-              <TableHead className="text-center">תשאול היסטוריה</TableHead>
-              <TableHead className="text-center">איש קשר</TableHead>
-              <TableHead className="text-center">מועד שאילתת היסטוריה אחרונה</TableHead>
-              <TableHead className="text-center">מועד שליפה אחרון</TableHead>
-              <TableHead className="text-center">מועד שליפה תקינה אחרונה</TableHead>
+              <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("operatorId")}>
+                <span className="flex items-center gap-1 justify-center">מזהה מפעיל <SortIcon direction={sortKey === "operatorId" ? sortDir : null} /></span>
+              </TableHead>
+              <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("managementStatus")}>
+                <span className="flex items-center gap-1 justify-center">סטטוס ניהולי <SortIcon direction={sortKey === "managementStatus" ? sortDir : null} /></span>
+              </TableHead>
+              <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("operationalStatus")}>
+                <span className="flex items-center gap-1 justify-center">סטטוס תפעולי <SortIcon direction={sortKey === "operationalStatus" ? sortDir : null} /></span>
+              </TableHead>
+              <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("historyQuery")}>
+                <span className="flex items-center gap-1 justify-center">תשאול היסטוריה <SortIcon direction={sortKey === "historyQuery" ? sortDir : null} /></span>
+              </TableHead>
+              <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("contactPerson")}>
+                <span className="flex items-center gap-1 justify-center">איש קשר <SortIcon direction={sortKey === "contactPerson" ? sortDir : null} /></span>
+              </TableHead>
+              <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("lastQueryDate")}>
+                <span className="flex items-center gap-1 justify-center">מועד שאילתת היסטוריה אחרונה <SortIcon direction={sortKey === "lastQueryDate" ? sortDir : null} /></span>
+              </TableHead>
+              <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("lastPullDate")}>
+                <span className="flex items-center gap-1 justify-center">מועד שליפה אחרון <SortIcon direction={sortKey === "lastPullDate" ? sortDir : null} /></span>
+              </TableHead>
+              <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort("lastValidPullDate")}>
+                <span className="flex items-center gap-1 justify-center">מועד שליפה תקינה אחרונה <SortIcon direction={sortKey === "lastValidPullDate" ? sortDir : null} /></span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map((op) => (
+            {sorted.map((op) => (
               <TableRow key={op.id} className="hover:bg-muted/30 border-b">
                 <TableCell className="text-center">
                   <MoreVertical className="h-4 w-4 text-muted-foreground cursor-pointer" />
