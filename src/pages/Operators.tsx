@@ -5,13 +5,10 @@ import { Button } from "@/components/ui/button";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import type { Operator, OperatorResponse } from "@/types/operator";
-import operatorData from "@/data/operators.json";
+import type { Operator } from "@/types/operator";
+import { fetchOperators } from "@/lib/apiClient";
 import OperatorDetails from "@/components/OperatorDetails";
 import OperatorTableSkeleton from "@/components/OperatorTableSkeleton";
-
-const operators: Operator[] =
-  (operatorData as OperatorResponse).uiMessage.responseData.operatorList.operator;
 
 const StatusDot = memo(({ code, label }: { code: string; label: string }) => (
   <div className="flex items-center gap-2 justify-center">
@@ -91,11 +88,19 @@ const Operators = () => {
   const [sortDir, setSortDir] = useState<SortDirection>(null);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
+  const [operators, setOperators] = useState<Operator[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  // Simulate loading state
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
+    fetchOperators()
+      .then((data) => {
+        setOperators(data.uiMessage.responseData.operatorList.operator);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch operators:", err);
+        setError("שגיאה בטעינת הנתונים");
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   const toggleRow = useCallback((recordId: string) => {
