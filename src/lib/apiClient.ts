@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:18322";
+const BASE_URL = "/api";
 
 export async function postRequest<T>(endpoint: string, body: unknown): Promise<T> {
   const response = await fetch(`${BASE_URL}${endpoint}`, {
