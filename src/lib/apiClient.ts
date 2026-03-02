@@ -3,9 +3,10 @@ const BASE_URL = "/api";
 export async function postRequest<T>(endpoint: string, body: unknown): Promise<T> {
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     method: "POST",
-    credentials: "omit",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "X-Requested-With": "XMLHttpRequest",
     },
     body: JSON.stringify(body),
   });
