@@ -184,7 +184,13 @@ const Operators = () => {
         <span className="text-sm text-muted-foreground">{filtered.length} מתוך {operators.length}</span>
       </div>
 
-      {isLoading ? (
+      {error ? (
+        <div className="px-6 py-12 text-center">
+          <p className="text-destructive text-lg font-medium">Loading failed</p>
+          <p className="text-muted-foreground text-sm mt-1">{error}</p>
+          <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>נסה שוב</Button>
+        </div>
+      ) : isLoading ? (
         <OperatorTableSkeleton />
       ) : (
         <div className="px-6 overflow-x-auto">
