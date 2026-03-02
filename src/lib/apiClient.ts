@@ -1,7 +1,9 @@
 const BASE_URL = "/api";
 
 export async function postRequest<T>(endpoint: string, body: unknown): Promise<T> {
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
+  const url = `${BASE_URL}${endpoint}`;
+  console.log("Attempting to fetch operators...", { url, body });
+  const response = await fetch(url, {
     method: "POST",
     credentials: "include",
     headers: {
