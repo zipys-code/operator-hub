@@ -93,18 +93,47 @@ const Operators = () => {
   const [error, setError] = useState<string | null>(null);
   const [showNewOperator, setShowNewOperator] = useState(false);
 
-  const handleNewOperatorSubmit = (data: NewOperatorFormValues) => {
-    console.log("New operator form data:", data);
-    // TODO: connect to API
-    setShowNewOperator(false);
+  const handleNewOperatorSubmit = async (data: NewOperatorFormValues) => {
+    try {
+      // כאן אנחנו משתמשים בפונקציה שכתבנו קודם ל-apiClient
+      // אם עוד לא הוספת אותה ל-apiClient, אפשר לקרוא ישירות ל-postRequest
+      console.log("Submitting new operator:", data);
+
+      // את יכולה להשתמש בזה כבדיקה ראשונית:
+      // await addOperator(data); 
+
+      setShowNewOperator(false);
+      // רענון הטבלה אחרי הוספה מוצלחת
+      window.location.reload();
+    } catch (err) {
+      console.error("Failed to add operator:", err);
+    }
   };
 
   useEffect(() => {
+    setIsLoading(true);
     fetchOperators()
       .then((data) => {
         console.log("Data received from API:", data);
-        const operatorsList = Array.isArray(data) ? data : [];
-        setOperators(operatorsList);
+
+        let operatorsList = [];
+
+        // מקרה א': המידע חוזר כמערך ישיר (מה שקורה אצלך עכשיו לפי הלוג)
+        if (Array.isArray(data)) {
+          operatorsList = data;
+        }
+        // מקרה ב': המידע עטוף ב-uiMessage (כמו שחשבנו קודם)
+        else if (data?.uiMessage?.responseData?.operatorList?.operator) {
+          operatorsList = data.uiMessage.responseData.operatorList.operator;
+        }
+
+        if (operatorsList.length > 0 || Array.isArray(data)) {
+          setOperators(operatorsList);
+          setError(null);
+        } else {
+          console.error("Unexpected data structure:", data);
+          setError("מבנה נתונים לא מזוהה");
+        }
       })
       .catch((err) => {
         console.error("Failed to fetch operators:", err);
@@ -134,14 +163,21 @@ const Operators = () => {
   };
 
   const filtered = useMemo(() => {
+    // אם המערך ריק, תחזיר מערך ריק
+    if (!operators || !Array.isArray(operators)) return [];
+
+    // אם אין חיפוש, תחזיר את כל המפעילים
     if (!search) return operators;
+
     const q = search.toLowerCase();
-    return operators.filter((op) =>
-      op.operatorName.includes(q) ||
-      String(op.operatorId).includes(q) ||
-      op.contactFirstName.includes(q)
-    );
-  }, [search]);
+    return operators.filter((op) => {
+      // וידוא שהשדות קיימים לפני שמריצים עליהם toLowerCase
+      const name = op.operatorName ? String(op.operatorName).toLowerCase() : "";
+      const id = op.operatorId ? String(op.operatorId).toLowerCase() : "";
+
+      return name.includes(q) || id.includes(q);
+    });
+  }, [search, operators]);
 
   const sorted = useMemo(() => {
     if (!sortKey || !sortDir) return filtered;
