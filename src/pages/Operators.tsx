@@ -91,6 +91,13 @@ const Operators = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [operators, setOperators] = useState<Operator[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [showNewOperator, setShowNewOperator] = useState(false);
+
+  const handleNewOperatorSubmit = (data: NewOperatorFormValues) => {
+    console.log("New operator form data:", data);
+    // TODO: connect to API
+    setShowNewOperator(false);
+  };
 
   useEffect(() => {
     fetchOperators()
