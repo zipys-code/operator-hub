@@ -9,6 +9,7 @@ import type { Operator } from "@/types/operator";
 import { fetchOperators } from "@/lib/apiClient";
 import OperatorDetails from "@/components/OperatorDetails";
 import OperatorTableSkeleton from "@/components/OperatorTableSkeleton";
+import NewOperatorModal, { type NewOperatorFormValues } from "@/components/NewOperatorModal";
 
 const StatusDot = memo(({ code, label }: { code: string; label: string }) => (
   <div className="flex items-center gap-2 justify-center">
