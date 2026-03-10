@@ -94,11 +94,15 @@ const Operators = () => {
   useEffect(() => {
     fetchOperators()
       .then((data) => {
+<<<<<<< HEAD
         // בגלל שב-apiClients.ts כבר שלפנו את המערך, 'data' הוא הרשימה עצמה.
         // אנחנו רק מוודאים שזה אכן מערך כדי למנוע שגיאות.
         console.log("Data received from API:", data); // שורה חדשה לבדיקה
         const operatorsList = Array.isArray(data) ? data : [];
         setOperators(operatorsList);
+=======
+        setOperators(data.uiMessage.responseData.operatorList.operator);
+>>>>>>> b09087bb10ea6e1ede6f9cb2ab2740a07356c536
       })
       .catch((err) => {
         console.error("Failed to fetch operators:", err);
