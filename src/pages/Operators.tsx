@@ -178,7 +178,7 @@ const Operators = () => {
           <Button variant="outline" className="border-primary text-primary hover:bg-primary/10">
             <BarChart3 className="ml-2 h-4 w-4" />הצגת גרפים
           </Button>
-          <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+          <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => setShowNewOperator(true)}>
             <Plus className="ml-2 h-4 w-4" />הוספת מפעיל
           </Button>
         </div>
