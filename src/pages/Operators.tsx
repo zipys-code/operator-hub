@@ -251,6 +251,12 @@ const Operators = () => {
           </Table>
         </div>
       )}
+
+      <NewOperatorModal
+        open={showNewOperator}
+        onOpenChange={setShowNewOperator}
+        onSubmit={handleNewOperatorSubmit}
+      />
     </div>
   );
 };
