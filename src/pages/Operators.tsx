@@ -9,6 +9,7 @@ import type { Operator } from "@/types/operator";
 import { fetchOperators } from "@/lib/apiClient";
 import OperatorDetails from "@/components/OperatorDetails";
 import OperatorTableSkeleton from "@/components/OperatorTableSkeleton";
+import NewOperatorModal, { type NewOperatorFormValues } from "@/components/NewOperatorModal";
 
 const StatusDot = memo(({ code, label }: { code: string; label: string }) => (
   <div className="flex items-center gap-2 justify-center">
@@ -90,19 +91,20 @@ const Operators = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [operators, setOperators] = useState<Operator[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [showNewOperator, setShowNewOperator] = useState(false);
+
+  const handleNewOperatorSubmit = (data: NewOperatorFormValues) => {
+    console.log("New operator form data:", data);
+    // TODO: connect to API
+    setShowNewOperator(false);
+  };
 
   useEffect(() => {
     fetchOperators()
       .then((data) => {
-<<<<<<< HEAD
-        // בגלל שב-apiClients.ts כבר שלפנו את המערך, 'data' הוא הרשימה עצמה.
-        // אנחנו רק מוודאים שזה אכן מערך כדי למנוע שגיאות.
-        console.log("Data received from API:", data); // שורה חדשה לבדיקה
+        console.log("Data received from API:", data);
         const operatorsList = Array.isArray(data) ? data : [];
         setOperators(operatorsList);
-=======
-        setOperators(data.uiMessage.responseData.operatorList.operator);
->>>>>>> b09087bb10ea6e1ede6f9cb2ab2740a07356c536
       })
       .catch((err) => {
         console.error("Failed to fetch operators:", err);
@@ -176,7 +178,7 @@ const Operators = () => {
           <Button variant="outline" className="border-primary text-primary hover:bg-primary/10">
             <BarChart3 className="ml-2 h-4 w-4" />הצגת גרפים
           </Button>
-          <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+          <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => setShowNewOperator(true)}>
             <Plus className="ml-2 h-4 w-4" />הוספת מפעיל
           </Button>
         </div>
@@ -249,6 +251,12 @@ const Operators = () => {
           </Table>
         </div>
       )}
+
+      <NewOperatorModal
+        open={showNewOperator}
+        onOpenChange={setShowNewOperator}
+        onSubmit={handleNewOperatorSubmit}
+      />
     </div>
   );
 };
