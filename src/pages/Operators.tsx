@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, memo } from "react";
-import { Search, Plus, BarChart3, Menu, MoreVertical, ChevronDown, ChevronUp, ChevronsUpDown, ChevronLeft, UserCog } from "lucide-react";
+import { Search, Plus, BarChart3, MoreVertical, ChevronDown, ChevronUp, ChevronsUpDown, ChevronLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
