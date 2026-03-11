@@ -70,7 +70,7 @@ export default function Layout() {
 
       {/* ===== SIDE DRAWER ===== */}
       <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <SheetContent side="right" className="w-72 p-0">
+        <SheetContent side="left" className="w-72 p-0">
           <SheetHeader className="p-4 border-b">
             <SheetTitle className="text-right">תפריט</SheetTitle>
           </SheetHeader>
