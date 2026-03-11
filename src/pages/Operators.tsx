@@ -197,15 +197,8 @@ const Operators = () => {
   }, [filtered, sortKey, sortDir]);
 
   return (
-    <div dir="rtl" className="min-h-screen bg-background text-foreground">
-      <header className="flex items-center justify-between border-b px-6 py-3">
-        <div className="flex items-center gap-3">
-          <Menu className="h-5 w-5 text-muted-foreground cursor-pointer" />
-          <div className="flex items-center gap-2">
-            <UserCog className="h-6 w-6 text-primary" />
-            <span className="font-semibold text-lg">ZipyS</span>
-          </div>
-        </div>
+    <div className="bg-background text-foreground">
+      <div className="px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -217,15 +210,6 @@ const Operators = () => {
           <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => setShowNewOperator(true)}>
             <Plus className="ml-2 h-4 w-4" />הוספת מפעיל
           </Button>
-        </div>
-      </header>
-
-      <div className="px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="bg-primary/10 p-2 rounded-lg">
-            <UserCog className="h-8 w-8 text-primary" />
-          </div>
-          <h1 className="text-2xl font-bold">ניהול מפעילים</h1>
         </div>
         <span className="text-sm text-muted-foreground">{filtered.length} מתוך {operators.length}</span>
       </div>
