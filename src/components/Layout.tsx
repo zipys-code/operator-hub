@@ -43,7 +43,7 @@ export default function Layout() {
   return (
     <div dir="rtl" className="flex flex-col min-h-screen bg-background text-foreground">
       {/* ===== TOP BAR ===== */}
-      <header className="flex items-center justify-between border-b px-4 py-2 bg-background shrink-0">
+      <header className="flex items-center justify-between border-b px-4 py-2 bg-background shrink-0" dir="ltr">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setDrawerOpen(true)}
@@ -60,10 +60,10 @@ export default function Layout() {
 
         {pageTitle && (
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-primary">{pageTitle}</h1>
             <div className="bg-primary/10 p-1.5 rounded-lg">
               <UserCog className="h-6 w-6 text-primary" />
             </div>
+            <h1 className="text-xl font-bold text-primary">{pageTitle}</h1>
           </div>
         )}
       </header>
