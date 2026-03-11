@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Menu, Search, Plus, BarChart3, UserCog, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Menu, UserCog } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 const menuItems = [
@@ -27,13 +25,12 @@ const menuItems = [
   { label: "ניתוח נסיעות אוטובוסים", path: "/bus-analysis" },
 ];
 
-// Map routes to page titles and whether they show action buttons
-const pageMeta: Record<string, { title: string; hasActions?: boolean }> = {
-  "/operators": { title: "ניהול מפעילים", hasActions: true },
-  "/developers": { title: "ניהול מפתחים" },
-  "/signs": { title: "ניהול שלטים" },
-  "/events": { title: "ניהול אירועים" },
-  "/users": { title: "ניהול משתמשים" },
+const pageTitles: Record<string, string> = {
+  "/operators": "ניהול מפעילים",
+  "/developers": "ניהול מפתחים",
+  "/signs": "ניהול שלטים",
+  "/events": "ניהול אירועים",
+  "/users": "ניהול משתמשים",
 };
 
 export default function Layout() {
@@ -41,14 +38,12 @@ export default function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const currentMeta = pageMeta[location.pathname] || { title: "" };
-  const isOperators = location.pathname === "/operators";
+  const pageTitle = pageTitles[location.pathname] || "";
 
   return (
     <div dir="rtl" className="flex flex-col min-h-screen bg-background text-foreground">
       {/* ===== TOP BAR ===== */}
       <header className="flex items-center justify-between border-b px-4 py-2 bg-background shrink-0">
-        {/* Right side (RTL): hamburger + logo */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setDrawerOpen(true)}
@@ -63,42 +58,14 @@ export default function Layout() {
           </div>
         </div>
 
-        {/* Center: search */}
-        <div className="hidden sm:block">
-          <div className="relative">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="חיפוש"
-              className="pr-9 w-56"
-              id="global-search"
-            />
-          </div>
-        </div>
-
-        {/* Left side (RTL): title + action buttons */}
-        <div className="flex items-center gap-3">
-          {isOperators && (
-            <>
-              <Button variant="outline" className="border-primary text-primary hover:bg-primary/10">
-                <BarChart3 className="ml-2 h-4 w-4" />הצגת גרפים
-              </Button>
-              <Button
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
-                id="add-operator-btn"
-              >
-                <Plus className="ml-2 h-4 w-4" />הוספת מפעיל
-              </Button>
-            </>
-          )}
-          {currentMeta.title && (
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-primary">{currentMeta.title}</h1>
-              <div className="bg-primary/10 p-1.5 rounded-lg">
-                <UserCog className="h-6 w-6 text-primary" />
-              </div>
+        {pageTitle && (
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold text-primary">{pageTitle}</h1>
+            <div className="bg-primary/10 p-1.5 rounded-lg">
+              <UserCog className="h-6 w-6 text-primary" />
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </header>
 
       {/* ===== SIDE DRAWER ===== */}
